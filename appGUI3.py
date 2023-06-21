@@ -6,6 +6,7 @@ import matplotlib.animation as animation
 # Algoritmos de reemplazo de página
 def reemplazo_pagina_fifo(paginas, capacidad):
     memoria = []
+    disco = []
     fallos_pagina = 0
     historial_reemplazo = []  # Lista para almacenar el historial de reemplazo
 
@@ -15,15 +16,18 @@ def reemplazo_pagina_fifo(paginas, capacidad):
             if len(memoria) < capacidad:
                 memoria.append(pagina)
             else:
-                memoria.pop(0)
+                if pagina in disco:
+                    disco.remove(pagina)
+                disco.append(memoria.pop(0))
                 memoria.append(pagina)
         
-        historial_reemplazo.append((pagina, list(memoria)))  # Guardar el proceso y la configuración actual de la memoria en el historial
+        historial_reemplazo.append((pagina, list(memoria), list(disco)))  # Guardar el proceso y la configuración actual de la memoria en el historial
 
     return fallos_pagina, historial_reemplazo
 
 def reemplazo_pagina_lru(paginas, capacidad):
     memoria = []
+    disco = []
     fallos_pagina = 0
     historial_reemplazo = []  # Lista para almacenar el historial de reemplazo
 
@@ -33,13 +37,17 @@ def reemplazo_pagina_lru(paginas, capacidad):
             if len(memoria) < capacidad:
                 memoria.append(pagina)
             else:
-                memoria.pop(0)
+                if pagina in disco:
+                    disco.remove(pagina)
+                disco.append(memoria.pop(0))
                 memoria.append(pagina)
         else:
+            if pagina in disco:
+                disco.remove(pagina)
             memoria.remove(pagina)
             memoria.append(pagina)
         
-        historial_reemplazo.append((pagina, list(memoria)))  # Guardar el proceso y la configuración actual de la memoria en el historial
+        historial_reemplazo.append((pagina, list(memoria), list(disco)))  # Guardar el proceso y la configuración actual de la memoria en el historial
     
     return fallos_pagina, historial_reemplazo
 
@@ -64,7 +72,7 @@ def animate(algoritmo, secuencia_paginas, capacidad_memoria):
         ax.set_xlim([0, 1])
         ax.set_ylim([0, 1])
 
-        proceso, memoria = historial[i]
+        proceso, memoria, disco = historial[i]
 
         ax.text(0.25, 0.1, f"Proceso: {proceso}", fontsize=12, ha='center')
         ax.text(0.5, 0.42, f"Memoria RAM", fontsize=12, ha='center',weight='bold')
@@ -83,10 +91,9 @@ def animate(algoritmo, secuencia_paginas, capacidad_memoria):
         ax.text(0.5, 0.92, "Disco Duro", fontsize=12, weight='bold', ha='center')
 
         # Dibujar los cuadrados representando los procesos en el disco duro
-        for j, p in enumerate(secuencia_paginas[:i+1]):
-            if p not in memoria:
-                ax.add_patch(plt.Rectangle((0.3 + j * 0.1, 0.76), 0.08, 0.08, color='blue', edgecolor='black'))
-                ax.text(0.34 + j * 0.1, 0.79, str(p), fontsize=10, ha='center', color='white')
+        for j, p in enumerate(disco):
+            ax.add_patch(plt.Rectangle((0.3 + j * 0.1, 0.76), 0.08, 0.08, color='blue', edgecolor='black'))
+            ax.text(0.34 + j * 0.1, 0.79, str(p), fontsize=10, ha='center', color='white')
         
         def on_animation_finished():
             start_button.config(state="normal")
