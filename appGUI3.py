@@ -74,26 +74,26 @@ def animate(algoritmo, secuencia_paginas, capacidad_memoria):
 
         proceso, memoria, disco = historial[i]
 
-        ax.text(0.25, 0.1, f"Proceso: {proceso}", fontsize=12, ha='center')
+        ax.text(0.25, 0.01, f"Proceso: {proceso}", fontsize=12, ha='center')
         ax.text(0.5, 0.42, f"Memoria RAM", fontsize=12, ha='center',weight='bold')
-        ax.text(0.7, 0.1, f"Marcos disponibles: {capacidad_memoria}", fontsize=12, ha='center')
+        ax.text(0.7, 0.01, f"Marcos disponibles: {capacidad_memoria}", fontsize=12, ha='center')
         
         # Dibujar la memoria RAM
-        ax.add_patch(plt.Rectangle((0.2, 0.2), 0.6, 0.3, facecolor='lightgreen', linewidth=1, edgecolor='black'))
+        ax.add_patch(plt.Rectangle((0.05, 0.1), 0.9, 0.4, facecolor='lightgreen', linewidth=1, edgecolor='black'))
 
         # Dibujar cuadrados representando los procesos en la Memoria RAM
         for j, p in enumerate(memoria):
-            ax.add_patch(plt.Rectangle((0.3 + j * 0.1, 0.26), 0.08, 0.08, facecolor='blue', linewidth=1, edgecolor='black'))
-            ax.text(0.34 + j * 0.1, 0.29, str(p), fontsize=10, ha='center', color='white')
+            ax.add_patch(plt.Rectangle((0.1 + j * 0.1, 0.26), 0.08, 0.08, facecolor='blue', linewidth=1, edgecolor='black'))
+            ax.text(0.14 + j * 0.1, 0.29, str(p), fontsize=10, ha='center', color='white')
 
         # Dibujar el disco duro
-        ax.add_patch(plt.Rectangle((0.2, 0.7), 0.6, 0.3, facecolor='lightblue', linewidth=1, edgecolor='black'))
+        ax.add_patch(plt.Rectangle((0.05, 0.6), 0.9, 0.4, facecolor='lightblue', linewidth=1, edgecolor='black'))
         ax.text(0.5, 0.92, "Disco Duro", fontsize=12, weight='bold', ha='center')
 
         # Dibujar los cuadrados representando los procesos en el disco duro
         for j, p in enumerate(disco):
-            ax.add_patch(plt.Rectangle((0.3 + j * 0.1, 0.76), 0.08, 0.08, facecolor='red', linewidth=1, edgecolor='black'))
-            ax.text(0.34 + j * 0.1, 0.79, str(p), fontsize=10, ha='center', color='white')
+            ax.add_patch(plt.Rectangle((0.1 + j * 0.1, 0.76), 0.08, 0.08, facecolor='red', linewidth=1, edgecolor='black'))
+            ax.text(0.14 + j * 0.1, 0.79, str(p), fontsize=10, ha='center', color='white')
         
         def on_animation_finished():
             start_button.config(state="normal")
@@ -110,18 +110,22 @@ def animate(algoritmo, secuencia_paginas, capacidad_memoria):
 # Función para manejar el botón Start
 def start_simulation():
     secuencia = input_secuencia.get()
-    capacidad = input_capacidad.get()
+    capacidad = input_capacidad.get() # Maximo de marcos = 8
     algoritmo = dropdown_algoritmo.get()
 
     if not secuencia or not capacidad:
         messagebox.showerror("Error", "Por favor, ingresa la secuencia de páginas y la capacidad de memoria")
         return
 
+    if int(capacidad) > 8:
+        messagebox.showerror("Error", "La capacidad de memoria no puede ser mayor a 8")
+        return
+    
     try:
         secuencia_paginas = list(map(int, secuencia.split(',')))
         capacidad_memoria = int(capacidad)
         animate(algoritmo, secuencia_paginas, capacidad_memoria)
-        start_button.config(state="disabled")
+        #start_button.config(state="disabled")
     except ValueError:
         messagebox.showerror("Error", "Por favor, ingresa una secuencia válida y un valor numérico para la capacidad de memoria")
         return
@@ -138,7 +142,7 @@ label_secuencia.pack()
 input_secuencia = tk.Entry(window, width=30)
 input_secuencia.pack()
 
-label_capacidad = tk.Label(window, text="Capacidad de memoria:")
+label_capacidad = tk.Label(window, text="Capacidad de memoria (Máximo 8):")
 label_capacidad.pack()
 
 input_capacidad = tk.Entry(window, width=10)
