@@ -74,6 +74,8 @@ def animate(algoritmo, secuencia_paginas, capacidad_memoria):
 
         proceso, memoria, disco = historial[i]
 
+        # change window title on ax
+        ax.set_title(f"Algoritmo {algoritmo}", fontsize=14, weight='bold')
         ax.text(0.25, 0.01, f"Proceso: {proceso}", fontsize=12, ha='center')
         ax.text(0.5, 0.42, f"Memoria RAM", fontsize=12, ha='center',weight='bold')
         ax.text(0.7, 0.01, f"Marcos disponibles: {capacidad_memoria}", fontsize=12, ha='center')
